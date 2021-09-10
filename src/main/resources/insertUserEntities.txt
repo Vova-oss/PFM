@@ -1,0 +1,5 @@
+INSERT INTO public.pfm_user_entity( login, password)
+	(SELECT generate_series(1,479), '1111')
+
+select * from pfm_user_entity;
+select * from pfm_transaction_data;
