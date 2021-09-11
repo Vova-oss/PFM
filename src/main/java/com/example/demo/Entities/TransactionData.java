@@ -1,7 +1,6 @@
 package com.example.demo.Entities;
 
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -16,16 +15,22 @@ public class TransactionData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private UserEntity client;
-
     private Long card_id;
     private String score_of_card;
     private String date;
     private String sum;
     private String currency;
     private String info;
-    private Integer mcc_code;
     private String mcc_info;
+
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_id")
+    private UserEntity client;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mcc_code")
+    private MCC mcc_code;
 
 }
