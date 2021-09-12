@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Entity.TransactionData;
+import com.example.demo.ResponsesForWidgets.TopThreeCategories;
 import com.example.demo.Service.TransactionDataService;
 import com.example.demo.Service.UserService;
 import io.swagger.annotations.Api;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import java.util.List;
 
 @Api(tags = "TransactionData")
 @RestController
@@ -28,14 +30,24 @@ public class TransactionDataController {
     TransactionDataService transactionDataService;
 
 
-    @ApiOperation(value = "Траты за месяц (нужен только jwt-token)")
+    @ApiOperation(value = "Траты за месяц (нужен jwt-token)")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "{\n   status:...,\n   info:...,\n   path:...\n}"),
             @ApiResponse(code = 432, message = "Incorrect JWToken")
     })
     @GetMapping("/monthlyExpenses")
-    public void monthlyExpenses(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+    public void monthlyExpenses(HttpServletRequest request, HttpServletResponse response) {
         transactionDataService.monthlyExpenses(request, response);
+    }
+
+
+    @ApiOperation(value = "Топ три финансово затратные категории (нужен jwt-token)")
+    @ApiResponses(value = {
+            @ApiResponse(code = 432, message = "Incorrect JWToken")
+    })
+    @GetMapping("/topThreeCategories")
+    public List<TopThreeCategories> topThreeCategories(HttpServletRequest request, HttpServletResponse response){
+        return transactionDataService.topThreeCategories(request, response);
     }
 
 }
