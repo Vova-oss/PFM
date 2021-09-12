@@ -1,5 +1,5 @@
 INSERT INTO public.pfm_user_entity(login, password)
-	(SELECT generate_series(1,479), '1111');
+	(SELECT generate_series(1,479), '$2a$12$4oXol.yq7X/dTcoJ0BTzwOMTRP8xM2PSi0wWrc18Fg3Jf7iCCaplm');
 
 
 INSERT INTO public.pfm_role(role)
