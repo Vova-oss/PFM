@@ -3,14 +3,13 @@ package com.example.demo.Security.SService;
 import com.example.demo.AuxiliaryClasses.StaticMethods;
 import com.example.demo.Entity.UserEntity;
 import com.example.demo.Security.SEntity.RefreshToken;
-import com.example.demo.Security.SEntity.RefreshTokenRepository;
+import com.example.demo.Repository.RefreshTokenRepository;
 import com.example.demo.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

@@ -1,6 +1,7 @@
-package com.example.demo.Security.SEntity;
+package com.example.demo.Repository;
 
 import com.example.demo.Entity.UserEntity;
+import com.example.demo.Security.SEntity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

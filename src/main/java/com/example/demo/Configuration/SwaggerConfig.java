@@ -28,7 +28,8 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .tags(
                         new Tag("User", "Взаимодействие с Пользователями"),
-                        new Tag("Security", "Безопасная составляющая")
+                        new Tag("Security", "Безопасная составляющая"),
+                        new Tag("TransactionData", "Данные по транзакциям")
                 )
                 .ignoredParameterTypes(Resource.class, InputStream.class);
 

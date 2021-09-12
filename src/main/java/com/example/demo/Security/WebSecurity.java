@@ -46,6 +46,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
 
                 .antMatchers("/refreshToken").permitAll()
 
+                .antMatchers("/transactions/**").hasAuthority("USER")
+
 
                 .anyRequest().permitAll()
                 .and()
