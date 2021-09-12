@@ -5,6 +5,8 @@ import com.example.demo.DAO.TransactionDataDAO;
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.Entity.UserEntity;
 import com.example.demo.ResponsesForWidgets.TopThreeCategories;
+import com.example.demo.ResponsesForWidgets.expensesByDay.Amount;
+import com.example.demo.ResponsesForWidgets.expensesByDay.ExpensesByDay;
 import com.example.demo.Security.SService.JWTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.sql.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,11 +31,6 @@ public class TransactionDataService {
 
     @Autowired
     TransactionDataDAO transactionDataDAO;
-
-    String url = "jdbc:postgresql://localhost:5432/pfm";
-    String name = "postgres";
-    String pass = "admin";
-
 
     /**
      * Получение трат за месяц
@@ -71,7 +69,7 @@ public class TransactionDataService {
                 return null;
             }
 
-            Integer allSum = (int) transactionDataDAO.monthlyExpenses(userEntity.getId());
+            int allSum = (int) transactionDataDAO.monthlyExpenses(userEntity.getId());
             List<TopThreeCategories> responseList = new LinkedList<>();
             for(GroupCodesOfClient groupCodesOfClient: list){
                 TopThreeCategories topThreeCategories = new TopThreeCategories();
@@ -83,6 +81,39 @@ public class TransactionDataService {
 
             return responseList;
 
+        }
+        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+        return null;
+    }
+
+    public ExpensesByDay expensesByDay(HttpServletRequest request, HttpServletResponse response) {
+
+        // Получение номера недели в текущем году
+//        System.out.println(new GregorianCalendar(2021, Calendar.AUGUST,1).get(Calendar.WEEK_OF_YEAR));
+
+        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
+            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+            if (userEntity == null)
+                return null;
+
+            List<Amount> currentAmount = transactionDataDAO.currentOrAverageAmount(userEntity.getId(), "currentByWeek");
+            List<Amount> averageAmount = transactionDataDAO.currentOrAverageAmount(userEntity.getId(), "averageByMonth");
+
+            ExpensesByDay expensesByDay = new ExpensesByDay();
+            expensesByDay.setAverageAmount(averageAmount);
+            expensesByDay.setCurrentAmount(currentAmount);
+
+            int max = 0;
+            for(Amount amount:currentAmount){
+                max = amount.getSum()>max?amount.getSum():max;
+            }
+            for(Amount amount:averageAmount){
+                max = amount.getSum()>max?amount.getSum():max;
+            }
+
+            expensesByDay.setMaxAmount(max);
+            return expensesByDay;
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
         return null;

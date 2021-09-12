@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //Херобора для превращения нашего листа с ролями в Collection <? extends GrantedAuthority>
         //Взял от сюда: https://www.youtube.com/watch?v=m5FAo5Oa6ag&t=3818s время 30:20
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole().name()))
+                .map(role -> new SimpleGrantedAuthority(role.getRole()))
                 .collect(Collectors.toList());
 
         return new User(user.getLogin(), user.getPassword(), authorities);

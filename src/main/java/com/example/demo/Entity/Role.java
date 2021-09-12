@@ -1,6 +1,5 @@
 package com.example.demo.Entity;
 
-import com.example.demo.Entity.Enum.ERoles;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,9 +16,9 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "role")
-    private ERoles role;
+    private String role;
 
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
