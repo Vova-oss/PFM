@@ -1,5 +1,25 @@
-INSERT INTO public.pfm_user_entity( login, password)
-	(SELECT generate_series(1,479), '1111')
+INSERT INTO public.pfm_user_entity(login, password)
+	(SELECT generate_series(1,479), '1111');
+
+
+INSERT INTO public.pfm_role(role)
+	VALUES ('USER');
+INSERT INTO public.pfm_role(role)
+	VALUES ('ADMIN');
+
+INSERT INTO public.pfm_roles_user_entities(user_id, role_id)
+	(select generate_series(1,479), 1);
+
+------------------------------------------------------------------------------------------------------------------------
+
+-- INSERT INTO public.pfm_refresh_token(expiry_date, token, user_id)
+-- (select
+--  	round( date_part( 'epoch', now() ) )*1000 + 864000000 ,
+--  	md5(random()::text),
+--  	generate_series(1,479)
+-- );
+
+
 
 select * from pfm_user_entity;
 select * from pfm_transaction_data;
