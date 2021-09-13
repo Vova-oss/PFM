@@ -1,7 +1,9 @@
 package com.example.demo.DAO;
 
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
-import com.example.demo.ResponsesForWidgets.expensesByDay.Amount;
+import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.ExpensesPerWeekByCategory;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.Indicators;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -206,4 +208,120 @@ public class TransactionDataDAO {
         return null;
     }
 
+    public List<Indicators> calculatingMonthlyAverages(Long id) {
+
+        String sql = "select \n" +
+                "\txxx.group_code group_code\n" +
+                "\t, AVG(xxx.summary) summary\n" +
+                "from(\n" +
+                "\tselect \n" +
+                "\t\tpm.group_code group_code\n" +
+                "\t\t, to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') \"date\"\n" +
+                "\t\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
+                "\tfrom pfm_transaction_data ptd\n" +
+                "\tjoin pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+                "\twhere to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "\tand CAST(replace(sum, ',','.') as float8) < 0 \n" +
+                "\tand ptd.client_id = ? \n" +
+                "\tgroup by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW'), pm.group_code\n" +
+                ") xxx\n" +
+                "group by xxx.group_code\n" +
+                "order by summary desc\n" +
+                "limit 7;";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DriverManager.getConnection(url, name, pass);
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+            ResultSet r = ps.executeQuery();
+            List<Indicators> list = new LinkedList<>();
+            while(r.next()){
+                Indicators indicators = new Indicators();
+                indicators.setCategory(r.getString("group_code"));
+                indicators.setSummary((int) r.getDouble("summary"));
+                list.add(indicators);
+            }
+            return list;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }finally {
+            try {
+                if(con != null)
+                    con.close();
+                if(ps != null)
+                    ps.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+
+    }
+
+    public List<Indicators> calculatingCurrentAmount(Long id, List<String> strings){
+
+        String sql = "select \n" +
+                "\tpm.group_code\n" +
+                "\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
+                "from pfm_transaction_data ptd\n" +
+                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+                "where to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') = '34'\n" +
+                "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
+                "and ptd.client_id = ? \n" +
+                "and (group_code = ? \n" +
+                "\tor group_code = ?\n" +
+                "\tor group_code = ?\n" +
+                "\tor group_code = ?\n" +
+                "\tor group_code = ?\n" +
+                "\tor group_code = ?\n" +
+                "\tor group_code = ?)\n" +
+                "group by pm.group_code\n" +
+                "order by summary desc\n" +
+                "limit 7;";
+
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DriverManager.getConnection(url, name, pass);
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+
+            for (int i = 0; i <7; i++){
+                if(strings.size()>i)
+                    ps.setString(i+2, strings.get(i));
+                else ps.setString(i+2, null);
+            }
+
+            ResultSet r = ps.executeQuery();
+            List<Indicators> list = new LinkedList<>();
+            while(r.next()){
+                Indicators indicators = new Indicators();
+                indicators.setCategory(r.getString("group_code"));
+                indicators.setSummary((int) r.getDouble("summary"));
+                list.add(indicators);
+            }
+            return list;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }finally {
+            try {
+                if(con != null)
+                    con.close();
+                if(ps != null)
+                    ps.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+
+    }
 }
+
+

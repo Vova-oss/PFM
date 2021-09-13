@@ -5,8 +5,10 @@ import com.example.demo.DAO.TransactionDataDAO;
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.Entity.UserEntity;
 import com.example.demo.ResponsesForWidgets.TopThreeCategories;
-import com.example.demo.ResponsesForWidgets.expensesByDay.Amount;
-import com.example.demo.ResponsesForWidgets.expensesByDay.ExpensesByDay;
+import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
+import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.ExpensesByDay;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.ExpensesPerWeekByCategory;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.Indicators;
 import com.example.demo.Security.SService.JWTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -127,10 +127,35 @@ public class TransactionDataService {
             if (userEntity == null)
                 return null;
 
-            List<Amount> list = transactionDataDAO.expensesByMonth(userEntity.getId());
-            return list;
+            return transactionDataDAO.expensesByMonth(userEntity.getId());
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
         return null;
+    }
+
+
+    public ExpensesPerWeekByCategory expensesPerWeekByCategory(HttpServletRequest request, HttpServletResponse response) {
+
+        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
+            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+            if (userEntity == null)
+                return null;
+
+            List<Indicators> monthlyAverages = transactionDataDAO.calculatingMonthlyAverages(userEntity.getId());
+            List<String> strings = new LinkedList<>();
+            for(Indicators indicators: monthlyAverages)
+                strings.add(indicators.getCategory());
+            List<Indicators> currentIndicators = transactionDataDAO.calculatingCurrentAmount(userEntity.getId(), strings);
+
+            ExpensesPerWeekByCategory expensesPerWeekByCategory = new ExpensesPerWeekByCategory();
+            expensesPerWeekByCategory.setMonthlyAverages(monthlyAverages);
+            expensesPerWeekByCategory.setCurrentIndicators(currentIndicators);
+            return expensesPerWeekByCategory;
+
+        }
+        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+        return null;
+
     }
 }

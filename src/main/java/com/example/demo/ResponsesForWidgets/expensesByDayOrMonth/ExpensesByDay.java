@@ -1,4 +1,4 @@
-package com.example.demo.ResponsesForWidgets.expensesByDay;
+package com.example.demo.ResponsesForWidgets.expensesByDayOrMonth;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
