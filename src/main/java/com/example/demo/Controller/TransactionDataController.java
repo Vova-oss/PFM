@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Entity.TransactionData;
 import com.example.demo.ResponsesForWidgets.TopThreeCategories;
+import com.example.demo.ResponsesForWidgets.expensesByDay.Amount;
 import com.example.demo.ResponsesForWidgets.expensesByDay.ExpensesByDay;
 import com.example.demo.Service.TransactionDataService;
 import com.example.demo.Service.UserService;
@@ -55,13 +56,26 @@ public class TransactionDataController {
     @ApiOperation(value = "График расходов по дням (нужен jwt-token)")
     @ApiResponses(value = {
             @ApiResponse(code = 432, message = "Incorrect JWToken"),
-            @ApiResponse(code = 200, message = "currentAmount - текущая сумма:\n-date - дата(расположил по порядку)" +
+            @ApiResponse(code = 200, message = "currentAmount - текущая сумма:\n-date - дата в формате 'DD.MM.YYYY' " +
+                    "(расположил по порядку)" +
                     "\n-sum - сумма\n\taverageAmount - Средняя сумма:\n-date - день недели(на английском+в разнобой)" +
                     "\n-sum - сумма\nmaxAmount - Самое максимальное значение, которое нужно принять за 100%")
     })
     @GetMapping("/expensesByDay")
     public ExpensesByDay expensesByDay(HttpServletRequest request, HttpServletResponse response){
         return transactionDataService.expensesByDay(request, response);
+    }
+
+
+
+    @ApiOperation(value = "График расходов за месяц (нужен jwt-token)")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "date - дата в формате DD.MM.YYYY\nsum - сумма"),
+            @ApiResponse(code = 432, message = "Incorrect JWToken")
+    })
+    @GetMapping("/expensesByMonth")
+    public List<Amount> expensesByMonth(HttpServletRequest request, HttpServletResponse response){
+        return transactionDataService.expensesByMonth(request, response);
     }
 
 }

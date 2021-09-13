@@ -164,5 +164,46 @@ public class TransactionDataDAO {
         return currentAmount;
     }
 
+    public List<Amount> expensesByMonth(Long id){
+
+        String sql = "select \n" +
+                "\tptd.date\n" +
+                "\t, SUM(CAST(replace(sum, ',','.') as float8))\n" +
+                "from pfm_transaction_data ptd\n" +
+                "where CAST(replace(sum, ',','.') as float8) < 0\n" +
+                "and ptd.client_id = ?\n" +
+                "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "group by ptd.date;";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DriverManager.getConnection(url, name, pass);
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+            ResultSet r = ps.executeQuery();
+            List<Amount> list = new LinkedList<>();
+            while(r.next()){
+                Amount amount = new Amount();
+                amount.setData(r.getString("date"));
+                amount.setSum((int) r.getDouble("sum"));
+                list.add(amount);
+            }
+            return list;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }finally {
+            try {
+                if(con != null)
+                    con.close();
+                if(ps != null)
+                    ps.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+    }
 
 }

@@ -118,4 +118,19 @@ public class TransactionDataService {
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
         return null;
     }
+
+
+    public List<Amount> expensesByMonth(HttpServletRequest request, HttpServletResponse response) {
+        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
+            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+            if (userEntity == null)
+                return null;
+
+            List<Amount> list = transactionDataDAO.expensesByMonth(userEntity.getId());
+            return list;
+        }
+        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+        return null;
+    }
 }
