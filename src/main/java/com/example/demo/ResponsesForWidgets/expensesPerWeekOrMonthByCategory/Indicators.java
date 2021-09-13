@@ -1,4 +1,4 @@
-package com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory;
+package com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

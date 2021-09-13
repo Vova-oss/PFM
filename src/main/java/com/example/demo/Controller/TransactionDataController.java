@@ -3,7 +3,8 @@ package com.example.demo.Controller;
 import com.example.demo.ResponsesForWidgets.TopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.ExpensesByDay;
-import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.ExpensesPerWeekByCategory;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.ExpensesPerWeekByCategory;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.Indicators;
 import com.example.demo.Service.TransactionDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -88,4 +89,17 @@ public class TransactionDataController {
             HttpServletResponse response){
         return transactionDataService.expensesPerWeekByCategory(request, response);
     }
+
+
+    @ApiOperation("Топ расходов за месяц")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "category(string) - категория\nsummary(int) - сумма"),
+            @ApiResponse(code = 432, message = "Incorrect JWToken")
+    })
+    @GetMapping("/topExpensesForTheMonth")
+    public List<Indicators> topExpensesForTheMonth(HttpServletRequest request, HttpServletResponse response){
+        return transactionDataService.topExpensesForTheMonth(request, response);
+    }
+
+
 }

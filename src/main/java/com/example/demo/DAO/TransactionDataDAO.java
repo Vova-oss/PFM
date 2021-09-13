@@ -2,8 +2,7 @@ package com.example.demo.DAO;
 
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
-import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.ExpensesPerWeekByCategory;
-import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.Indicators;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.Indicators;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -297,6 +296,52 @@ public class TransactionDataDAO {
                     ps.setString(i+2, strings.get(i));
                 else ps.setString(i+2, null);
             }
+
+            ResultSet r = ps.executeQuery();
+            List<Indicators> list = new LinkedList<>();
+            while(r.next()){
+                Indicators indicators = new Indicators();
+                indicators.setCategory(r.getString("group_code"));
+                indicators.setSummary((int) r.getDouble("summary"));
+                list.add(indicators);
+            }
+            return list;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }finally {
+            try {
+                if(con != null)
+                    con.close();
+                if(ps != null)
+                    ps.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+
+    }
+
+    public List<Indicators> topExpensesForTheMonth(Long id) {
+
+        String sql = "select \n" +
+                "\tpm.group_code\n" +
+                "\t, SUM(CAST(replace(ptd.sum, ',','.') as float8) ) *(-1) summary\n" +
+                "from pfm_transaction_data ptd\n" +
+                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+                "where client_id = ?\n" +
+                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
+                "group by pm.group_code";
+
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DriverManager.getConnection(url, name, pass);
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
 
             ResultSet r = ps.executeQuery();
             List<Indicators> list = new LinkedList<>();

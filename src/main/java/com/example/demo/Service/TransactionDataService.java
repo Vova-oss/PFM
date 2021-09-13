@@ -7,8 +7,8 @@ import com.example.demo.Entity.UserEntity;
 import com.example.demo.ResponsesForWidgets.TopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.ExpensesByDay;
-import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.ExpensesPerWeekByCategory;
-import com.example.demo.ResponsesForWidgets.expensesPerWeekByCategory.Indicators;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.ExpensesPerWeekByCategory;
+import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.Indicators;
 import com.example.demo.Security.SService.JWTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -152,6 +152,22 @@ public class TransactionDataService {
             expensesPerWeekByCategory.setMonthlyAverages(monthlyAverages);
             expensesPerWeekByCategory.setCurrentIndicators(currentIndicators);
             return expensesPerWeekByCategory;
+
+        }
+        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+        return null;
+
+    }
+
+    public List<Indicators> topExpensesForTheMonth(HttpServletRequest request, HttpServletResponse response) {
+
+        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
+            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+            if (userEntity == null)
+                return null;
+
+            return transactionDataDAO.topExpensesForTheMonth(userEntity.getId());
 
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
