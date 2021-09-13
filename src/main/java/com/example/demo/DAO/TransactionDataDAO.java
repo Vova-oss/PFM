@@ -21,6 +21,7 @@ public class TransactionDataDAO {
     String pass;
 
 
+    /** Получение трат за месяц */
     public double monthlyExpenses(Long id){
         String sql = "select \n" +
                 "\tclient_id, \n" +
@@ -56,6 +57,10 @@ public class TransactionDataDAO {
     }
 
 
+    /**
+     * Топ 3 категории за месяц
+     * @param id - :id пользователя
+     */
     public List<GroupCodesOfClient> findGroupsCodeOfClient(Long id){
 
         String sql = "select \n" +
@@ -105,6 +110,15 @@ public class TransactionDataDAO {
     }
 
 
+    /**
+     * В графике расходов по дням ищет Среднюю сумму или Текущую сумму.
+     * Средняя сумма - среднее значение расходов в месяц за определённый день недели.
+     * Текущая сумма - значение расходов за данный день недели на текущей недели.
+     * @param id - :id пользователя
+     * @param sql - строка принимает одно из двух значений:
+     *            averageByMonth - если хотим посчитать Среднюю сумму
+     *            currentByWeek - если хотим посчитать Текущую сумму
+     */
     public List<Amount> currentOrAverageAmount(Long id, String sql) {
 
         String currentByWeek = "select \n" +
@@ -122,14 +136,20 @@ public class TransactionDataDAO {
                 "order by to_date(xxx.\"date\",'DD.MM.YYYY');";
 
         String averageByMonth = "select \n" +
-                "\tto_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'ID') \"date\"\n" +
-                "\t, AVG(CAST(replace(sum, ',','.') as float8))*(-1) summary\n" +
-                "from pfm_transaction_data ptd\n" +
-                "where ptd.client_id = ?\n" +
-                "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
-                "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
-                "and CAST(replace(sum, ',','.') as float8) < 0\n" +
-                "group by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'ID');";
+                "\tto_char(xxx.to_date, 'ID') \"date\",\n" +
+                "\tAVG(xxx.summary) summary\n" +
+                "from(\n" +
+                "\tselect \n" +
+                "\t\tto_date(ptd.date,'DD.MM.YYYY'),\n" +
+                "\t\tSUM(CAST(replace(sum, ',','.') as float8) ) *(-1) summary\n" +
+                "\tfrom pfm_transaction_data ptd\n" +
+                "\twhere ptd.client_id = ?\n" +
+                "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "\tand CAST(replace(sum, ',','.') as float8) < 0\n" +
+                "\tgroup by to_date(ptd.date,'DD.MM.YYYY')\n" +
+                ") xxx \n" +
+                "group by to_char(xxx.to_date, 'ID')";
         if(sql.equals("averageByMonth"))
             sql = averageByMonth;
         if(sql.equals("currentByWeek"))
@@ -165,6 +185,12 @@ public class TransactionDataDAO {
         return currentAmount;
     }
 
+
+    /**
+     *
+     * @param id
+     * @return
+     */
     public List<Amount> expensesByMonth(Long id){
 
         String sql = "select \n" +

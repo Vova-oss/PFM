@@ -55,6 +55,10 @@ public class TransactionDataService {
     }
 
 
+    /**
+     * Топ 3 категории за месяц
+     * @code 432 - Incorrect JWToken
+     */
     public List<TopThreeCategories> topThreeCategories(HttpServletRequest request, HttpServletResponse response) {
 
         String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
@@ -86,6 +90,11 @@ public class TransactionDataService {
         return null;
     }
 
+
+    /**
+     * График расходов по дням
+     * @code 432 - Incorrect JWToken
+     */
     public ExpensesByDay expensesByDay(HttpServletRequest request, HttpServletResponse response) {
 
         // Получение номера недели в текущем году
@@ -120,6 +129,10 @@ public class TransactionDataService {
     }
 
 
+    /**
+     * График расходов за месяц
+     * @code 432 - Incorrect JWToken
+     */
     public List<Amount> expensesByMonth(HttpServletRequest request, HttpServletResponse response) {
         String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
         if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
@@ -134,6 +147,10 @@ public class TransactionDataService {
     }
 
 
+    /**
+     * Диаграмма недельных расходов по категориям
+     * @code 432 - Incorrect JWToken
+     */
     public ExpensesPerWeekByCategory expensesPerWeekByCategory(HttpServletRequest request, HttpServletResponse response) {
 
         String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
@@ -159,6 +176,11 @@ public class TransactionDataService {
 
     }
 
+
+    /**
+     * Топ расходов за месяц
+     * @code 432 - Incorrect JWToken
+     */
     public List<Indicators> topExpensesForTheMonth(HttpServletRequest request, HttpServletResponse response) {
 
         String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);

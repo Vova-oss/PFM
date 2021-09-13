@@ -53,7 +53,7 @@ public class TransactionDataController {
             @ApiResponse(code = 432, message = "Incorrect JWToken"),
             @ApiResponse(code = 200, message = "currentAmount - текущая сумма:\n-date - дата в формате 'DD.MM.YYYY' " +
                     "(расположил по порядку)" +
-                    "\n-sum - сумма\n\taverageAmount - Средняя сумма:\n-date - день недели(на английском+в разнобой)" +
+                    "\n-sum - сумма\n\taverageAmount - Средняя сумма:\n-date - день недели(его номер)" +
                     "\n-sum - сумма\nmaxAmount - Самое максимальное значение, которое нужно принять за 100%")
     })
     @GetMapping("/expensesByDay")
