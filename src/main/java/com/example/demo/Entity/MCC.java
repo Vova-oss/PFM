@@ -8,11 +8,10 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "pfm_mcc")
+@Table(schema = "pfm", name = "mcc")
 public class MCC {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code")
     private Long code;
 

@@ -29,8 +29,8 @@ public class TransactionDataService {
     @Autowired
     TransactionDataDAO transactionDataDAO;
 
-    String url = "jdbc:postgresql://localhost:5432/pfm";
-    String name = "postgres";
+    String url = "jdbc:postgresql://localhost:5432/postgres";
+    String name = "admin";
     String pass = "admin";
 
 

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "pfm_transaction_data")
+@Table(schema = "pfm", name = "transaction_data")
 public class TransactionData {
 
     @Id
@@ -26,8 +26,8 @@ public class TransactionData {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "client_id")
-    private UserEntity client;
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mcc_code")

@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Data
 @Entity
-@Table(name = "pfm_refresh_token")
+@Table(schema = "pfm", name = "refresh_token")
 public class RefreshToken {
 
     @Id
@@ -17,7 +17,7 @@ public class RefreshToken {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @Column(nullable = false, unique = true)
     private String token;

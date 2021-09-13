@@ -32,7 +32,7 @@ public class RefreshTokenService {
 
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUserEntity(userEntity);
+        refreshToken.setUser(userEntity);
         refreshToken.setExpiryDate(System.currentTimeMillis()+(EXPIRATION_TIME_OF_RT));
         refreshToken.setToken(UUID.randomUUID().toString());
 
@@ -65,7 +65,7 @@ public class RefreshTokenService {
 
     /** Удаление всех токенов, принадлежащих конкретному пользователю */
     public void deleteAllByUser(UserEntity userEntity) {
-        List<RefreshToken> list = refreshTokenRepository.findAllByUserEntity(userEntity);
+        List<RefreshToken> list = refreshTokenRepository.findAllByUser(userEntity);
         refreshTokenRepository.deleteAll(list);
     }
 
@@ -99,7 +99,7 @@ public class RefreshTokenService {
                 return;
             }
 
-            UserEntity userEntity = refreshToken.getUserEntity();
+            UserEntity userEntity = refreshToken.getUser();
 
             String token = jwTokenService.createJWT(userEntity.getLogin(), String.valueOf(userEntity.getRoles().get(0).getRole()));
             response.addHeader(HEADER_JWT_STRING, TOKEN_PREFIX+token);
