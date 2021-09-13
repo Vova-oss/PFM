@@ -11,10 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +88,7 @@ public class TransactionDataController {
     }
 
 
-    @ApiOperation("Топ расходов за месяц")
+    @ApiOperation(value = "Топ расходов за месяц")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "category(string) - категория\nsummary(int) - сумма"),
             @ApiResponse(code = 432, message = "Incorrect JWToken")
@@ -101,5 +98,26 @@ public class TransactionDataController {
         return transactionDataService.topExpensesForTheMonth(request, response);
     }
 
+
+    @GetMapping("/historyOfOperations")
+    public void historyOfOperations(
+            @RequestParam(value = "minSum", required = false, defaultValue = "0") String minSum,
+            @RequestParam(value = "maxSum", required = false, defaultValue = "-1") String maxSum,
+            @RequestParam(value = "from", required = false, defaultValue = "01.08.2021") String from,
+            @RequestParam(value = "to", required = false, defaultValue = "01.10.2021") String to,
+            @RequestParam(value = "operationType", required = false, defaultValue = "all") String operationType,
+            @RequestParam(value = "page", required = false, defaultValue = "1") String page,
+            HttpServletRequest request,
+            HttpServletResponse response){
+        transactionDataService.historyOfOperations(
+                minSum,
+                maxSum,
+                from,
+                to,
+                operationType,
+                page,
+                request,
+                response);
+    }
 
 }

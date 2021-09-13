@@ -122,14 +122,14 @@ public class TransactionDataDAO {
                 "order by to_date(xxx.\"date\",'DD.MM.YYYY');";
 
         String averageByMonth = "select \n" +
-                "\tto_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'Day') \"date\"\n" +
+                "\tto_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'ID') \"date\"\n" +
                 "\t, AVG(CAST(replace(sum, ',','.') as float8))*(-1) summary\n" +
                 "from pfm_transaction_data ptd\n" +
                 "where ptd.client_id = ?\n" +
                 "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
                 "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
                 "and CAST(replace(sum, ',','.') as float8) < 0\n" +
-                "group by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'Day');";
+                "group by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'ID');";
         if(sql.equals("averageByMonth"))
             sql = averageByMonth;
         if(sql.equals("currentByWeek"))

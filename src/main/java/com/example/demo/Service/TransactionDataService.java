@@ -172,6 +172,30 @@ public class TransactionDataService {
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
         return null;
+    }
+
+
+    public void historyOfOperations(
+            String minSum,
+            String maxSum,
+            String from,
+            String to,
+            String operationType,
+            String page,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
+            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+            if (userEntity == null)
+                return;
+
+
+
+        }
+        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+        return;
 
     }
 }
