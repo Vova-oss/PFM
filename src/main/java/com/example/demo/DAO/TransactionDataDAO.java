@@ -231,7 +231,7 @@ public class TransactionDataDAO {
             while(r.next()){
                 Amount amount = new Amount();
                 amount.setData(r.getString("date"));
-                amount.setSum((int) r.getDouble("sum"));
+                amount.setSum((int) r.getDouble("summary"));
                 list.add(amount);
             }
             return list;
