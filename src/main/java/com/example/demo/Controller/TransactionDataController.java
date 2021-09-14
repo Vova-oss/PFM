@@ -1,15 +1,13 @@
 package com.example.demo.Controller;
 
+import com.example.demo.ResponsesForWidgets.historyOfOperations.HistoryOfOperations;
 import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.MonthlyExpensesAndTopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.ExpensesByDay;
 import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.ExpensesPerWeekByCategory;
 import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.Indicators;
 import com.example.demo.Service.TransactionDataService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,17 +97,28 @@ public class TransactionDataController {
     }
 
 
+    @ApiOperation(value = "История операций")
+    @ApiResponses(value = {
+            @ApiResponse(code = 432, message = "Incorrect JWToken"),
+            @ApiResponse(code = 433, message = "Incorrect operationType")
+    })
     @GetMapping("/historyOfOperations")
-    public void historyOfOperations(
+    public List<HistoryOfOperations> historyOfOperations(
+            @ApiParam(value = "минимальное значение суммы", defaultValue = "0")
             @RequestParam(value = "minSum", required = false, defaultValue = "0") String minSum,
-            @RequestParam(value = "maxSum", required = false, defaultValue = "-1") String maxSum,
+            @ApiParam(value = "максимальное значение суммы", defaultValue = "9999999999999999999999999")
+            @RequestParam(value = "maxSum", required = false, defaultValue = "9999999999999999999999999") String maxSum,
+            @ApiParam(value = "начальное значение даты (включительно)", defaultValue = "01.08.2021")
             @RequestParam(value = "from", required = false, defaultValue = "01.08.2021") String from,
+            @ApiParam(value = "конечное значение даты (не включительно)", defaultValue = "01.10.2021")
             @RequestParam(value = "to", required = false, defaultValue = "01.10.2021") String to,
+            @ApiParam(value = "тип операции: input - входящие; output - исходящие; all - все", defaultValue = "all")
             @RequestParam(value = "operationType", required = false, defaultValue = "all") String operationType,
-            @RequestParam(value = "page", required = false, defaultValue = "1") String page,
+            @ApiParam(value = "номер 'страницы'", defaultValue = "0")
+            @RequestParam(value = "page", required = false, defaultValue = "0") String page,
             HttpServletRequest request,
             HttpServletResponse response){
-        transactionDataService.historyOfOperations(
+        return transactionDataService.historyOfOperations(
                 minSum,
                 maxSum,
                 from,

@@ -4,6 +4,7 @@ import com.example.demo.AuxiliaryClasses.StaticMethods;
 import com.example.demo.DAO.TransactionDataDAO;
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.Entity.UserEntity;
+import com.example.demo.ResponsesForWidgets.historyOfOperations.HistoryOfOperations;
 import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.MonthlyExpensesAndTopThreeCategories;
 import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.TopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
@@ -202,7 +203,7 @@ public class TransactionDataService {
     }
 
 
-    public void historyOfOperations(
+    public List<HistoryOfOperations> historyOfOperations(
             String minSum,
             String maxSum,
             String from,
@@ -216,13 +217,34 @@ public class TransactionDataService {
         if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
             UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
             if (userEntity == null)
-                return;
+                return null;
+            String dopRules = "";
+            switch (operationType){
+                case "all":
+                    dopRules += "and ((CAST(replace(ptd.sum, ',','.') as float8) > "+minSum+" and CAST(replace(sum, ',','.') as float8) < "+maxSum+")\n" +
+                        "or(CAST(replace(ptd.sum, ',','.') as float8) < -"+minSum+" and CAST(replace(sum, ',','.') as float8) > -"+maxSum+"))";
+                    break;
+                case "input":
+                    dopRules += "and (CAST(replace(ptd.sum, ',','.') as float8) > "+minSum+" and CAST(replace(sum, ',','.') as float8) < "+maxSum+")";
+                    break;
+                case "output":
+                    dopRules += "and (CAST(replace(ptd.sum, ',','.') as float8) < -"+minSum+" and CAST(replace(sum, ',','.') as float8) > -"+maxSum+")";
+                    break;
+                default:
+                    StaticMethods.createResponse(request, response, 433, "Incorrect operationType");
+                    return null;
+            }
 
+            dopRules += "and to_date(ptd.date,'DD.MM.YYYY') >= '"+from+"'\n" +
+                    "and to_date(ptd.date,'DD.MM.YYYY') < '"+to+"' ";
 
+            dopRules += "limit 10 offset " + (10 * Integer.parseInt(page));
+
+            return transactionDataDAO.historyOfOperations(userEntity.getId(), dopRules);
 
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
-        return;
+        return null;
 
     }
 }

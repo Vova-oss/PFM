@@ -3,6 +3,7 @@ package com.example.demo.DAO;
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.Indicators;
+import com.example.demo.ResponsesForWidgets.historyOfOperations.HistoryOfOperations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -407,6 +408,54 @@ public class TransactionDataDAO {
             }
         }
         return null;
+
+    }
+
+    public List<HistoryOfOperations> historyOfOperations(Long id, String dopRules) {
+
+
+        String sql = "select \n" +
+                "\tptd.info\n" +
+                "\t, ptd.currency\n" +
+                "\t, CAST(replace(sum, ',','.') as float8) sum\n" +
+                "\t, ptd.date\n" +
+                "from pfm_transaction_data ptd \n" +
+                "where ptd.client_id = ?\n" +dopRules;
+
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DriverManager.getConnection(url, name, pass);
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+
+            ResultSet r = ps.executeQuery();
+            List<HistoryOfOperations> list = new LinkedList<>();
+            while(r.next()){
+                HistoryOfOperations historyOfOperations = new HistoryOfOperations();
+                historyOfOperations.setDate(r.getString("date"));
+                historyOfOperations.setCurrency(r.getString("currency"));
+                historyOfOperations.setInfo(r.getString("info"));
+                historyOfOperations.setSum((int) r.getDouble("sum"));
+
+                list.add(historyOfOperations);
+            }
+            return list;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }finally {
+            try {
+                if(con != null)
+                    con.close();
+                if(ps != null)
+                    ps.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+
 
     }
 }
