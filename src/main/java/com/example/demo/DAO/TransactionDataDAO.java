@@ -136,8 +136,8 @@ public class TransactionDataDAO {
                 "order by to_date(xxx.\"date\",'DD.MM.YYYY');";
 
         String averageByMonth = "select \n" +
-                "\tto_char(xxx.to_date, 'ID') \"date\",\n" +
-                "\tAVG(xxx.summary) summary\n" +
+                "\tyyy.days \"date\",\n" +
+                "\tcoalesce(AVG(xxx.summary), 0) summary\n" +
                 "from(\n" +
                 "\tselect \n" +
                 "\t\tto_date(ptd.date,'DD.MM.YYYY'),\n" +
@@ -146,10 +146,16 @@ public class TransactionDataDAO {
                 "\twhere ptd.client_id = ?\n" +
                 "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
                 "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "\t\tand to_date(ptd.date,'DD.MM.YYYY') <> '2021-08-21' -----------\n" +
                 "\tand CAST(replace(sum, ',','.') as float8) < 0\n" +
                 "\tgroup by to_date(ptd.date,'DD.MM.YYYY')\n" +
+                "\n" +
                 ") xxx \n" +
-                "group by to_char(xxx.to_date, 'ID')";
+                "right join \n" +
+                "(\n" +
+                "\tselect CAST(generate_series(1, 7) as text) days\n" +
+                ") yyy on yyy.days = to_char(xxx.to_date, 'ID')\n" +
+                "group by yyy.days;";
         if(sql.equals("averageByMonth"))
             sql = averageByMonth;
         if(sql.equals("currentByWeek"))
