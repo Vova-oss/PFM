@@ -1,6 +1,6 @@
 package com.example.demo.Controller;
 
-import com.example.demo.ResponsesForWidgets.TopThreeCategories;
+import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.MonthlyExpensesAndTopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.ExpensesByDay;
 import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.ExpensesPerWeekByCategory;
@@ -27,24 +27,24 @@ public class TransactionDataController {
     TransactionDataService transactionDataService;
 
 
-    @ApiOperation(value = "Траты за месяц (нужен jwt-token)")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "{\n   status:...,\n   info:...,\n   path:...\n}"),
-            @ApiResponse(code = 432, message = "Incorrect JWToken")
-    })
-    @GetMapping("/monthlyExpenses")
-    public void monthlyExpenses(HttpServletRequest request, HttpServletResponse response) {
-        transactionDataService.monthlyExpenses(request, response);
-    }
+//    @ApiOperation(value = "Траты за месяц (нужен jwt-token)")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "{\n   status:...,\n   info:...,\n   path:...\n}"),
+//            @ApiResponse(code = 432, message = "Incorrect JWToken")
+//    })
+//    @GetMapping("/monthlyExpenses")
+//    public void monthlyExpenses(HttpServletRequest request, HttpServletResponse response) {
+//        transactionDataService.monthlyExpenses(request, response);
+//    }
 
 
-    @ApiOperation(value = "Топ три финансово затратные категории (нужен jwt-token)")
+    @ApiOperation(value = "Траты за месяц и Топ три финансово затратные категории (нужен jwt-token)")
     @ApiResponses(value = {
             @ApiResponse(code = 432, message = "Incorrect JWToken")
     })
-    @GetMapping("/topThreeCategories")
-    public List<TopThreeCategories> topThreeCategories(HttpServletRequest request, HttpServletResponse response){
-        return transactionDataService.topThreeCategories(request, response);
+    @GetMapping("/monthlyExpensesAndTopThreeCategories")
+    public MonthlyExpensesAndTopThreeCategories monthlyExpensesAndTopThreeCategories(HttpServletRequest request, HttpServletResponse response){
+        return transactionDataService.monthlyExpensesAndTopThreeCategories(request, response);
     }
 
 

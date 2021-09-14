@@ -4,7 +4,8 @@ import com.example.demo.AuxiliaryClasses.StaticMethods;
 import com.example.demo.DAO.TransactionDataDAO;
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.Entity.UserEntity;
-import com.example.demo.ResponsesForWidgets.TopThreeCategories;
+import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.MonthlyExpensesAndTopThreeCategories;
+import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.TopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.ExpensesByDay;
 import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.ExpensesPerWeekByCategory;
@@ -32,34 +33,35 @@ public class TransactionDataService {
     @Autowired
     TransactionDataDAO transactionDataDAO;
 
+//    /**
+//     * Получение трат за месяц
+//     * @code 432 - Incorrect JWToken
+//     * @code 200 - ${monthlyExpenses}
+//     */
+//    public void monthlyExpenses(HttpServletRequest request, HttpServletResponse response)  {
+//
+//        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+//        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)){
+//            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+//            if(userEntity == null)
+//                return;
+//
+//            double allSum = transactionDataDAO.monthlyExpenses(userEntity.getId());
+//            StaticMethods.createResponse(request, response, 200, String.valueOf((int) allSum));
+//            return;
+//
+//        }
+//        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+//
+//    }
+
+
     /**
-     * Получение трат за месяц
-     * @code 432 - Incorrect JWToken
-     * @code 200 - ${monthlyExpenses}
-     */
-    public void monthlyExpenses(HttpServletRequest request, HttpServletResponse response)  {
-
-        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
-        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)){
-            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
-            if(userEntity == null)
-                return;
-
-            double allSum = transactionDataDAO.monthlyExpenses(userEntity.getId());
-            StaticMethods.createResponse(request, response, 200, String.valueOf((int) allSum));
-            return;
-
-        }
-        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
-
-    }
-
-
-    /**
-     * Топ 3 категории за месяц
+     * Получение трат за месяц + Топ 3 категории за месяц
      * @code 432 - Incorrect JWToken
      */
-    public List<TopThreeCategories> topThreeCategories(HttpServletRequest request, HttpServletResponse response) {
+    public MonthlyExpensesAndTopThreeCategories monthlyExpensesAndTopThreeCategories(
+            HttpServletRequest request, HttpServletResponse response) {
 
         String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
         if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)){
@@ -73,17 +75,20 @@ public class TransactionDataService {
                 return null;
             }
 
-            int allSum = (int) transactionDataDAO.monthlyExpenses(userEntity.getId());
+            int wholeSum = (int) transactionDataDAO.monthlyExpenses(userEntity.getId());
             List<TopThreeCategories> responseList = new LinkedList<>();
             for(GroupCodesOfClient groupCodesOfClient: list){
                 TopThreeCategories topThreeCategories = new TopThreeCategories();
                 topThreeCategories.setCategory(groupCodesOfClient.getGroupCode());
                 topThreeCategories.setPrice(String.valueOf(groupCodesOfClient.getSummary()));
-                topThreeCategories.setPercent(String.valueOf((int)((double)groupCodesOfClient.getSummary()/allSum*100)));
+                topThreeCategories.setPercent(String.valueOf((int)((double)groupCodesOfClient.getSummary()/wholeSum*100)));
                 responseList.add(topThreeCategories);
             }
 
-            return responseList;
+            MonthlyExpensesAndTopThreeCategories monthlyExpensesAndTopThreeCategories = new MonthlyExpensesAndTopThreeCategories();
+            monthlyExpensesAndTopThreeCategories.setList(responseList);
+            monthlyExpensesAndTopThreeCategories.setWholeSum(wholeSum);
+            return monthlyExpensesAndTopThreeCategories;
 
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");

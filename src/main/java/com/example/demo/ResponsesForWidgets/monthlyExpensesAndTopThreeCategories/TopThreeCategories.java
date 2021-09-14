@@ -1,4 +1,4 @@
-package com.example.demo.ResponsesForWidgets;
+package com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories;
 
 import lombok.Data;
 
