@@ -200,14 +200,24 @@ public class TransactionDataDAO {
     public List<Amount> expensesByMonth(Long id){
 
         String sql = "select \n" +
-                "\tptd.date\n" +
-                "\t, SUM(CAST(replace(sum, ',','.') as float8))\n" +
-                "from pfm_transaction_data ptd\n" +
-                "where CAST(replace(sum, ',','.') as float8) < 0\n" +
-                "and ptd.client_id = ?\n" +
-                "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
-                "and to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
-                "group by ptd.date;";
+                "\tgd.\"date\"\n" +
+                "\t, coalesce(mp.summary*(-1), 0) summary\n" +
+                "from \n" +
+                "(\n" +
+                "\tselect to_char(to_date(CAST(generate_series('2021-08-01', '2021-08-31', '1 day'::interval) as text), 'YYYY-MM-DD'),'DD.MM.YYYY') \"date\"\n" +
+                ") gd\n" +
+                "left join \n" +
+                "(\n" +
+                "\tselect DISTINCT\n" +
+                "\t\tptd.date \n" +
+                "\t\t, SUM(CAST(replace(sum, ',','.') as float8)) summary\n" +
+                "\tfrom pfm_transaction_data ptd\n" +
+                "\twhere CAST(replace(sum, ',','.') as float8) < 0 \n" +
+                "\tand ptd.client_id = ?\n" +
+                "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "\tgroup by ptd.date\n" +
+                ") mp on mp.date = gd.\"date\"";
 
         Connection con = null;
         PreparedStatement ps = null;
