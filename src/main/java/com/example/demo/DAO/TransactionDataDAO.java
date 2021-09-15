@@ -309,29 +309,35 @@ public class TransactionDataDAO {
 
     public List<Indicators> calculatingCurrentAmount(Long id, List<String> strings){
 
-        String sql = "select *\n" +
-                "from(\n" +
-                "\tselect \n" +
-                "\t\tpm.group_code\n" +
-                "\t\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
-                "\tfrom pfm_transaction_data ptd\n" +
-                "\tjoin pfm_mcc pm on pm.code = ptd.mcc_code\n" +
-                "\twhere to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
-                "\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
-                "\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') = '34'\n" +
-                "\tand CAST(replace(sum, ',','.') as float8) < 0 \n" +
-                "\tand ptd.client_id = ? \n" +
-                "\tand (group_code = ? \n" +
-                "\t\tor group_code = ?\n" +
-                "\t\tor group_code = ?\n" +
-                "\t\tor group_code = ?\n" +
-                "\t\tor group_code = ?\n" +
-                "\t\tor group_code = ?\n" +
-                "\t\tor group_code = ?)\n" +
-                "\tgroup by pm.group_code\n" +
-                "\torder by summary desc\n" +
-                "\tlimit 7\n" +
-                ") yyy order by group_code";
+        String sql = "select  DISTINCT\n" +
+                "\tpm.group_code\n" +
+                "\t, coalesce(xxx.summary,0) summary\n" +
+                "from pfm_mcc pm \n" +
+                "left join(\n" +
+                "\n" +
+                "select \n" +
+                "\tpm.group_code\n" +
+                "\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
+                "from pfm_transaction_data ptd\n" +
+                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+                "where to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') = '34'\n" +
+                "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
+                "and ptd.client_id = ? \n" +
+                "\n" +
+                "group by pm.group_code\n" +
+                "order by summary desc\n" +
+                ") xxx on xxx.group_code = pm.group_code\n" +
+                "\n" +
+                "where (pm.group_code = ? \n" +
+                "\tor pm.group_code = ?\n" +
+                "\tor pm.group_code = ?\n" +
+                "\tor pm.group_code = ?\n" +
+                "\tor pm.group_code = ?\n" +
+                "\tor pm.group_code = ?\n" +
+                "\tor pm.group_code = ?)\n" +
+                "order by pm.group_code";
 
 
         Connection con = null;
