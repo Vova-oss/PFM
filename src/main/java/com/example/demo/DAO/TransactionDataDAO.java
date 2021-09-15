@@ -433,7 +433,8 @@ public class TransactionDataDAO {
                 "\t, CAST(replace(sum, ',','.') as float8) sum\n" +
                 "\t, ptd.date\n" +
                 "from pfm_transaction_data ptd \n" +
-                "where ptd.client_id = ?\n" +dopRules;
+                "where ptd.client_id = ?\n" +
+                "order by to_date(ptd.date,'DD.MM.YYYY') desc;" +dopRules;
 
 
         Connection con = null;
