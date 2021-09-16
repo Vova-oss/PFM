@@ -4,6 +4,8 @@ com\example\demo\Security\SService\RefreshTokenService.class
 com\example\demo\DemoApplication.class
 com\example\demo\Repository\RefreshTokenRepository.class
 com\example\demo\ResponsesForWidgets\expensesPerWeekOrMonthByCategory\ExpensesPerWeekByCategory.class
+com\example\demo\DTO\ProductsOfBankDTO.class
+com\example\demo\ResponsesForWidgets\advertisingProducts\AnalyticsClass.class
 com\example\demo\Security\SService\JWTokenService.class
 com\example\demo\Security\UserDetailsServiceImpl.class
 com\example\demo\ResponsesForWidgets\historyOfOperations\HistoryOfOperations.class

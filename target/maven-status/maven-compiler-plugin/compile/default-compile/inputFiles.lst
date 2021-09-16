@@ -10,6 +10,7 @@ C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\ResponsesForWidgets\ex
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\ResponsesForWidgets\expensesByDayOrMonth\Amount.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Security\SService\RefreshTokenService.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\ResponsesForWidgets\expensesPerWeekOrMonthByCategory\Indicators.java
+C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\DTO\ProductsOfBankDTO.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Entity\OurMCC.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Repository\RefreshTokenRepository.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\ResponsesForWidgets\expensesPerWeekOrMonthByCategory\ExpensesPerWeekByCategory.java
@@ -24,6 +25,7 @@ C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Controller\UserControl
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\DemoApplication.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Entity\Role.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Security\JWTAuthenticationFilter.java
+C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\ResponsesForWidgets\advertisingProducts\AnalyticsClass.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Controller\TransactionDataController.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\DAO\TransactionDataDAO.java
 C:\Users\vovap\Desktop\PFM\src\main\java\com\example\demo\Security\JWTAuthorizationFilter.java
