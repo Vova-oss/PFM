@@ -160,7 +160,6 @@ public class TransactionDataDAO {
                 "\twhere ptd.client_id = ?\n" +
                 "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
                 "\tand to_char(to_date(ptd.date,'DD.MM.YYYY'), 'MM') = '08'\n" +
-                "\t\tand to_date(ptd.date,'DD.MM.YYYY') <> '2021-08-21' -----------\n" +
                 "\tand CAST(replace(sum, ',','.') as float8) < 0\n" +
                 "\tgroup by to_date(ptd.date,'DD.MM.YYYY')\n" +
                 "\n" +
@@ -312,7 +311,7 @@ public class TransactionDataDAO {
                 "\torder by summary desc\n" +
                 "\tlimit 7\n" +
                 ") yyy\n" +
-                "order by group_code";
+                "order by group_code;";
         Connection con = null;
         PreparedStatement ps = null;
         try {
@@ -405,7 +404,7 @@ public class TransactionDataDAO {
                 "\tor pm.group_code_rus = ?\n" +
                 "\tor pm.group_code_rus = ?\n" +
                 "\tor pm.group_code_rus = ?)\n" +
-                "order by pm.group_code_rus";
+                "order by pm.group_code_rus;";
 
 
         Connection con = null;
@@ -509,6 +508,7 @@ public class TransactionDataDAO {
 
         String sql = "select \n" +
                 "\tptd.info\n" +
+                ",to_date(ptd.date,'DD.MM.YYYY') ttt\n"+
                 "\t, ptd.currency\n" +
                 "\t, CAST(replace(sum, ',','.') as float8) sum\n" +
                 "\t, ptd.date\n" +
@@ -523,7 +523,6 @@ public class TransactionDataDAO {
             con = DriverManager.getConnection(url, name, pass);
             ps = con.prepareStatement(sql);
             ps.setLong(1, id);
-
             ResultSet r = ps.executeQuery();
             List<HistoryOfOperations> list = new LinkedList<>();
             while(r.next()){

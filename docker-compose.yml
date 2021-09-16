@@ -9,7 +9,7 @@ services:
     depends_on:
       - postgresqldb
   postgresqldb:
-    image: postgres:9.4
+    image: postgres:13.4
     ports:
       - "5432:5432"
     volumes:

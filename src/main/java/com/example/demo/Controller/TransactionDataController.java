@@ -82,6 +82,7 @@ public class TransactionDataController {
     public ExpensesPerWeekByCategory expensesPerWeekByCategory(
             HttpServletRequest request,
             HttpServletResponse response){
+        System.out.println("dklsfjldkf");
         return transactionDataService.expensesPerWeekByCategory(request, response);
     }
 

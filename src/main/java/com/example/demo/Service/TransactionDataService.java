@@ -221,25 +221,25 @@ public class TransactionDataService {
             String dopRules = "";
             switch (operationType){
                 case "all":
-                    dopRules += "and ((CAST(replace(ptd.sum, ',','.') as float8) > "+minSum+" and CAST(replace(sum, ',','.') as float8) < "+maxSum+")\n" +
+                    dopRules += " and ((CAST(replace(ptd.sum, ',','.') as float8) > "+minSum+" and CAST(replace(sum, ',','.') as float8) < "+maxSum+")\n" +
                         "or(CAST(replace(ptd.sum, ',','.') as float8) < -"+minSum+" and CAST(replace(sum, ',','.') as float8) > -"+maxSum+"))";
                     break;
                 case "input":
-                    dopRules += "and (CAST(replace(ptd.sum, ',','.') as float8) > "+minSum+" and CAST(replace(sum, ',','.') as float8) < "+maxSum+")";
+                    dopRules += " and (CAST(replace(ptd.sum, ',','.') as float8) > "+minSum+" and CAST(replace(sum, ',','.') as float8) < "+maxSum+")";
                     break;
                 case "output":
-                    dopRules += "and (CAST(replace(ptd.sum, ',','.') as float8) < -"+minSum+" and CAST(replace(sum, ',','.') as float8) > -"+maxSum+")";
+                    dopRules += " and (CAST(replace(ptd.sum, ',','.') as float8) < -"+minSum+" and CAST(replace(sum, ',','.') as float8) > -"+maxSum+")";
                     break;
                 default:
                     StaticMethods.createResponse(request, response, 433, "Incorrect operationType");
                     return null;
             }
 
-            dopRules += "and to_date(ptd.date,'DD.MM.YYYY') >= '"+from+"'\n" +
-                    "and to_date(ptd.date,'DD.MM.YYYY') < '"+to+"' ";
+            dopRules += " and to_date(ptd.date,'DD.MM.YYYY') >= to_date('"+from+"', 'DD.MM.YYYY') "+
+                    "and to_date(ptd.date,'DD.MM.YYYY') < to_date('"+to+"', 'DD.MM.YYYY') ";
+
 
             String limitOffset = "limit 10 offset " + (10 * Integer.parseInt(page));
-
             return transactionDataDAO.historyOfOperations(userEntity.getId(), dopRules, limitOffset);
 
         }
