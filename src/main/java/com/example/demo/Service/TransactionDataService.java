@@ -2,8 +2,11 @@ package com.example.demo.Service;
 
 import com.example.demo.AuxiliaryClasses.StaticMethods;
 import com.example.demo.DAO.TransactionDataDAO;
+import com.example.demo.DTO.ProductsOfBankDTO;
+import com.example.demo.Entity.ProductsOfBank;
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
 import com.example.demo.Entity.UserEntity;
+import com.example.demo.ResponsesForWidgets.advertisingProducts.AnalyticsClass;
 import com.example.demo.ResponsesForWidgets.historyOfOperations.HistoryOfOperations;
 import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.MonthlyExpensesAndTopThreeCategories;
 import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.TopThreeCategories;
@@ -241,6 +244,63 @@ public class TransactionDataService {
 
             String limitOffset = "limit 10 offset " + (10 * Integer.parseInt(page));
             return transactionDataDAO.historyOfOperations(userEntity.getId(), dopRules, limitOffset);
+
+        }
+        StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
+        return null;
+
+    }
+
+
+
+    public ProductsOfBankDTO advertisingProducts(HttpServletRequest request, HttpServletResponse response) {
+
+
+        String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
+        if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
+            UserEntity userEntity = userService.findByJWToken(tokenWithPrefix, request, response);
+            if (userEntity == null)
+                return null;
+
+            List<AnalyticsClass> list = transactionDataDAO.advertisingProducts(userEntity.getId());
+            int max = 0;
+            double cashSum = 0;
+            int maxOfCashCategory = 0;
+            for(AnalyticsClass row: list){
+                max = row.getSum();
+                if(row.getGroup_code().equals("Автомобильные сервисы")
+                    || row.getGroup_code().equals("Аптеки и медицина")
+                    || row.getGroup_code().equals("Транспорт и путешествия")){
+                    maxOfCashCategory += row.getSum();
+                    cashSum += (float)row.getSum()/100*7;
+                }
+                if(row.getGroup_code().equals("Дом и ремонт")
+                    || row.getGroup_code().equals("Кафе, рестораны")){
+                    maxOfCashCategory += row.getSum();
+                    cashSum += (float)row.getSum()/100*5;
+                }
+            }
+
+            if(max < 10_000){
+                ProductsOfBank productsOfBank = new ProductsOfBank();
+                productsOfBank.setDescription("Карта с бесплатным обслуживание при покупках по карте от 5000 ₽ в месяц");
+                productsOfBank.setLink("https://ib.psbank.ru/store/products/your-cashback-new");
+                productsOfBank.setTitle("Дебетовая карта \"Твой кешбэк\"");
+                return ProductsOfBankDTO.createProductsOfBankDTO(productsOfBank);
+            }
+
+            ProductsOfBank productsOfBank = new ProductsOfBank();
+            if(maxOfCashCategory>= 10_000 && cashSum >= 1000){
+                productsOfBank.setDescription("Прибыльная кредитная карта c кешбэком до 11%");
+                productsOfBank.setLink("https://ib.psbank.ru/store/products/double-cashback");
+                productsOfBank.setTitle("Двойной кешбэк");
+            }else{
+                productsOfBank.setDescription("Не думайте о процентах более трёх месяцев");
+                productsOfBank.setLink("https://ib.psbank.ru/store/products/sto-credit");
+                productsOfBank.setTitle("Кредитная карта «100+»");
+            }
+            return ProductsOfBankDTO.createProductsOfBankDTO(productsOfBank);
+
 
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");

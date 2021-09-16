@@ -1,6 +1,7 @@
 package com.example.demo.DAO;
 
 import com.example.demo.Entity.TempEntity.GroupCodesOfClient;
+import com.example.demo.ResponsesForWidgets.advertisingProducts.AnalyticsClass;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
 import com.example.demo.ResponsesForWidgets.expensesPerWeekOrMonthByCategory.Indicators;
 import com.example.demo.ResponsesForWidgets.historyOfOperations.HistoryOfOperations;
@@ -533,6 +534,53 @@ public class TransactionDataDAO {
                 historyOfOperations.setSum((int) r.getDouble("sum"));
 
                 list.add(historyOfOperations);
+            }
+            return list;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }finally {
+            try {
+                if(con != null)
+                    con.close();
+                if(ps != null)
+                    ps.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+
+
+    }
+
+    public List<AnalyticsClass> advertisingProducts(Long id) {
+
+        String sql = "select \n" +
+                "\tpom.group_code_rus group_code\n" +
+                "\t, ptd.score_of_card is_credit\n" +
+                "\t, SUM(CAST(replace(ptd.sum, ',','.') as float8)) sum\n" +
+                "from pfm_transaction_data ptd \n" +
+                "join pfm_our_mcc pom on pom.code = ptd.mcc_code_rus \n" +
+                "where ptd.client_id = ?\n" +
+                "and CAST(replace(ptd.sum, ',','.') as float8) < 0\n" +
+                "group by pom.group_code_rus, ptd.score_of_card";
+
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DriverManager.getConnection(url, name, pass);
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+            ResultSet r = ps.executeQuery();
+            List<AnalyticsClass> list = new LinkedList<>();
+            while(r.next()){
+                AnalyticsClass analyticsClass = new AnalyticsClass();
+                analyticsClass.setGroup_code(r.getString("group_code"));
+                analyticsClass.setIs_credit(r.getString("is_credit"));
+                analyticsClass.setSum((int) r.getDouble("sum"));
+
+                list.add(analyticsClass);
             }
             return list;
         } catch (SQLException throwable) {

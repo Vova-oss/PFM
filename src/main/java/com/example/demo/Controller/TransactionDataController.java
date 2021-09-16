@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.ProductsOfBankDTO;
 import com.example.demo.ResponsesForWidgets.historyOfOperations.HistoryOfOperations;
 import com.example.demo.ResponsesForWidgets.monthlyExpensesAndTopThreeCategories.MonthlyExpensesAndTopThreeCategories;
 import com.example.demo.ResponsesForWidgets.expensesByDayOrMonth.Amount;
@@ -128,6 +129,12 @@ public class TransactionDataController {
                 page,
                 request,
                 response);
+    }
+
+
+    @GetMapping("/advertisingProducts")
+    public ProductsOfBankDTO advertisingProducts(HttpServletRequest request, HttpServletResponse response){
+        return transactionDataService.advertisingProducts(request, response);
     }
 
 }
