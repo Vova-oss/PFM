@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+  app:
+#    container_name: springboot-courseword
+#    image: springboot-postgresql
+    build: ./
+    ports:
+      - "7777:7777"
+    depends_on:
+      - postgresqldb
+  postgresqldb:
+    image: postgres:9.4
+    ports:
+      - "5432:5432"
+    volumes:
+#    - ./sql-init:/docker-entrypoint-initdb.d/
+    - ./sql-init/1-startSql.sql:/docker-entrypoint-initdb.d/1-s.sql
+    - ./csv-init/mcc.csv:/mcc.csv
+    - ./csv-init/our_mcc.csv:/our_mcc.csv
+    - ./csv-init/tr.csv:/tr.csv
+    - ./entrypoint.sh:/docker-entrypoint-initdb.d/entrypointA.sh
+
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres

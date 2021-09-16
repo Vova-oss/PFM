@@ -238,9 +238,9 @@ public class TransactionDataService {
             dopRules += "and to_date(ptd.date,'DD.MM.YYYY') >= '"+from+"'\n" +
                     "and to_date(ptd.date,'DD.MM.YYYY') < '"+to+"' ";
 
-            dopRules += "limit 10 offset " + (10 * Integer.parseInt(page));
+            String limitOffset = "limit 10 offset " + (10 * Integer.parseInt(page));
 
-            return transactionDataDAO.historyOfOperations(userEntity.getId(), dopRules);
+            return transactionDataDAO.historyOfOperations(userEntity.getId(), dopRules, limitOffset);
 
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");

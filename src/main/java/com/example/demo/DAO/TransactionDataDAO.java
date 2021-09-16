@@ -63,19 +63,32 @@ public class TransactionDataDAO {
      * @param id - :id пользователя
      */
     public List<GroupCodesOfClient> findGroupsCodeOfClient(Long id){
+// ------------------ Базовые -------------------------
+//        String sql = "select \n" +
+//                "\tptd.client_id client_id, \n" +
+//                "\tCOUNT(ptd.mcc_code) \"count\",\n" +
+//                "\tSUM(CAST(replace(sum, ',','.') as float8) ) *(-1) summary, \n" +
+//                "\tpm.group_code group_code\n" +
+//                "from pfm_transaction_data ptd\n" +
+//                "join pfm_mcc pm ON pm.code = ptd.mcc_code\n" +
+//                "where CAST(replace(sum, ',','.') as float8) < 0 \n" +
+//                "and ptd.client_id = ?\n" +
+//                "group by pm.group_code, ptd.client_id\n" +
+//                "order by summary desc\n" +
+//                "limit 3";
 
         String sql = "select \n" +
                 "\tptd.client_id client_id, \n" +
                 "\tCOUNT(ptd.mcc_code) \"count\",\n" +
                 "\tSUM(CAST(replace(sum, ',','.') as float8) ) *(-1) summary, \n" +
-                "\tpm.group_code group_code\n" +
+                "\tpm.group_code_rus group_code\n" +
                 "from pfm_transaction_data ptd\n" +
-                "join pfm_mcc pm ON pm.code = ptd.mcc_code\n" +
+                "join pfm_our_mcc pm ON pm.code = ptd.mcc_code\n" +
                 "where CAST(replace(sum, ',','.') as float8) < 0 \n" +
                 "and ptd.client_id = ?\n" +
-                "group by pm.group_code, ptd.client_id\n" +
+                "group by pm.group_code_rus, ptd.client_id\n" +
                 "order by summary desc\n" +
-                "limit 3";
+                "limit 3;";
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -252,6 +265,31 @@ public class TransactionDataDAO {
 
     public List<Indicators> calculatingMonthlyAverages(Long id) {
 
+// -------------- Базовые --------------------
+//        String sql = "select * from\n" +
+//                "(\n" +
+//                "\tselect \n" +
+//                "\t\txxx.group_code group_code\n" +
+//                "\t\t, AVG(xxx.summary) summary\n" +
+//                "\tfrom(\n" +
+//                "\t\tselect \n" +
+//                "\t\t\tpm.group_code group_code\n" +
+//                "\t\t\t, to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') \"date\"\n" +
+//                "\t\t\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
+//                "\t\tfrom pfm_transaction_data ptd\n" +
+//                "\t\tjoin pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+//                "\t\twhere to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+//                "\t\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+//                "\t\tand CAST(replace(sum, ',','.') as float8) < 0 \n" +
+//                "\t\tand ptd.client_id = ? \n" +
+//                "\t\tgroup by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW'), pm.group_code\n" +
+//                "\t) xxx\n" +
+//                "\tgroup by xxx.group_code\n" +
+//                "\torder by summary desc\n" +
+//                "\tlimit 7\n" +
+//                ") yyy\n" +
+//                "order by group_code";
+
         String sql = "select * from\n" +
                 "(\n" +
                 "\tselect \n" +
@@ -259,23 +297,22 @@ public class TransactionDataDAO {
                 "\t\t, AVG(xxx.summary) summary\n" +
                 "\tfrom(\n" +
                 "\t\tselect \n" +
-                "\t\t\tpm.group_code group_code\n" +
+                "\t\t\tpm.group_code_rus group_code\n" +
                 "\t\t\t, to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') \"date\"\n" +
                 "\t\t\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
                 "\t\tfrom pfm_transaction_data ptd\n" +
-                "\t\tjoin pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+                "\t\tjoin pfm_our_mcc pm on pm.code = ptd.mcc_code\n" +
                 "\t\twhere to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
                 "\t\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
                 "\t\tand CAST(replace(sum, ',','.') as float8) < 0 \n" +
                 "\t\tand ptd.client_id = ? \n" +
-                "\t\tgroup by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW'), pm.group_code\n" +
+                "\t\tgroup by to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW'), pm.group_code_rus\n" +
                 "\t) xxx\n" +
                 "\tgroup by xxx.group_code\n" +
                 "\torder by summary desc\n" +
                 "\tlimit 7\n" +
                 ") yyy\n" +
                 "order by group_code";
-
         Connection con = null;
         PreparedStatement ps = null;
         try {
@@ -309,35 +346,66 @@ public class TransactionDataDAO {
 
     public List<Indicators> calculatingCurrentAmount(Long id, List<String> strings){
 
+// --------------------- Базовый -------------------
+//        String sql = "select  DISTINCT\n" +
+//                "\tpm.group_code\n" +
+//                "\t, coalesce(xxx.summary,0) summary\n" +
+//                "from pfm_mcc pm \n" +
+//                "left join(\n" +
+//                "\n" +
+//                "select \n" +
+//                "\tpm.group_code\n" +
+//                "\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
+//                "from pfm_transaction_data ptd\n" +
+//                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+//                "where to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+//                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+//                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') = '34'\n" +
+//                "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
+//                "and ptd.client_id = ? \n" +
+//                "\n" +
+//                "group by pm.group_code\n" +
+//                "order by summary desc\n" +
+//                ") xxx on xxx.group_code = pm.group_code\n" +
+//                "\n" +
+//                "where (pm.group_code = ? \n" +
+//                "\tor pm.group_code = ?\n" +
+//                "\tor pm.group_code = ?\n" +
+//                "\tor pm.group_code = ?\n" +
+//                "\tor pm.group_code = ?\n" +
+//                "\tor pm.group_code = ?\n" +
+//                "\tor pm.group_code = ?)\n" +
+//                "order by pm.group_code";
+
         String sql = "select  DISTINCT\n" +
-                "\tpm.group_code\n" +
+                "\tpm.group_code_rus group_code\n" +
                 "\t, coalesce(xxx.summary,0) summary\n" +
-                "from pfm_mcc pm \n" +
+                "from pfm_our_mcc pm \n" +
                 "left join(\n" +
                 "\n" +
-                "select \n" +
-                "\tpm.group_code\n" +
-                "\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
-                "from pfm_transaction_data ptd\n" +
-                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
-                "where to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
-                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
-                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') = '34'\n" +
-                "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
-                "and ptd.client_id = ? \n" +
+                "\tselect \n" +
+                "\t\tpm.group_code_rus group_code\n" +
+                "\t\t, coalesce(SUM(CAST(replace(sum, ',','.') as float8) ) *(-1), 0) summary\n" +
+                "\tfrom pfm_transaction_data ptd\n" +
+                "\tjoin pfm_our_mcc pm on pm.code = ptd.mcc_code\n" +
+                "\twhere to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+                "\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+                "\tand to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'IW') = '34'\n" +
+                "\tand CAST(replace(sum, ',','.') as float8) < 0 \n" +
+                "\tand ptd.client_id = ? \n" +
                 "\n" +
-                "group by pm.group_code\n" +
-                "order by summary desc\n" +
-                ") xxx on xxx.group_code = pm.group_code\n" +
+                "\tgroup by pm.group_code_rus\n" +
+                "\torder by summary desc\n" +
+                ") xxx on xxx.group_code = pm.group_code_rus\n" +
                 "\n" +
-                "where (pm.group_code = ? \n" +
-                "\tor pm.group_code = ?\n" +
-                "\tor pm.group_code = ?\n" +
-                "\tor pm.group_code = ?\n" +
-                "\tor pm.group_code = ?\n" +
-                "\tor pm.group_code = ?\n" +
-                "\tor pm.group_code = ?)\n" +
-                "order by pm.group_code";
+                "where (pm.group_code_rus = ?\n" +
+                "\tor pm.group_code_rus = ?\n" +
+                "\tor pm.group_code_rus = ?\n" +
+                "\tor pm.group_code_rus = ?\n" +
+                "\tor pm.group_code_rus = ?\n" +
+                "\tor pm.group_code_rus = ?\n" +
+                "\tor pm.group_code_rus = ?)\n" +
+                "order by pm.group_code_rus";
 
 
         Connection con = null;
@@ -379,17 +447,29 @@ public class TransactionDataDAO {
     }
 
     public List<Indicators> topExpensesForTheMonth(Long id) {
+// ----------------- Базовый ------------------
+//        String sql = "select \n" +
+//                "\tpm.group_code\n" +
+//                "\t, SUM(CAST(replace(ptd.sum, ',','.') as float8) ) *(-1) summary\n" +
+//                "from pfm_transaction_data ptd\n" +
+//                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+//                "where client_id = ?\n" +
+//                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
+//                "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
+//                "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
+//                "group by pm.group_code";
 
         String sql = "select \n" +
-                "\tpm.group_code\n" +
+                "\tpm.group_code_rus group_code\n" +
                 "\t, SUM(CAST(replace(ptd.sum, ',','.') as float8) ) *(-1) summary\n" +
                 "from pfm_transaction_data ptd\n" +
-                "join pfm_mcc pm on pm.code = ptd.mcc_code\n" +
+                "join pfm_our_mcc pm on pm.code = ptd.mcc_code\n" +
                 "where client_id = ?\n" +
                 "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'YYYY') = '2021'\n" +
                 "and to_char(to_date(ptd.\"date\",'DD.MM.YYYY'), 'MM') = '08'\n" +
                 "and CAST(replace(sum, ',','.') as float8) < 0 \n" +
-                "group by pm.group_code";
+                "group by pm.group_code_rus\n" +
+                "order by summary desc;";
 
 
         Connection con = null;
@@ -424,7 +504,7 @@ public class TransactionDataDAO {
 
     }
 
-    public List<HistoryOfOperations> historyOfOperations(Long id, String dopRules) {
+    public List<HistoryOfOperations> historyOfOperations(Long id, String dopRules, String limitOffset) {
 
 
         String sql = "select \n" +
@@ -433,8 +513,8 @@ public class TransactionDataDAO {
                 "\t, CAST(replace(sum, ',','.') as float8) sum\n" +
                 "\t, ptd.date\n" +
                 "from pfm_transaction_data ptd \n" +
-                "where ptd.client_id = ?\n" +
-                "order by to_date(ptd.date,'DD.MM.YYYY') desc;" +dopRules;
+                "where ptd.client_id = ? \n"
+                 +dopRules + " order by to_date(ptd.date,'DD.MM.YYYY') desc, \"sum\"  desc, ptd.info desc "+limitOffset;
 
 
         Connection con = null;

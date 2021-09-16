@@ -33,4 +33,8 @@ public class TransactionData {
     @JoinColumn(name = "mcc_code")
     private MCC mcc_code;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mcc_code_rus")
+    private OurMCC ourMCC;
+
 }
