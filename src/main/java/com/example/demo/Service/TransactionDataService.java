@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.example.demo.Security.SecurityConstants.*;
 
@@ -190,7 +191,7 @@ public class TransactionDataService {
      * Топ расходов за месяц
      * @code 432 - Incorrect JWToken
      */
-    public List<Indicators> topExpensesForTheMonth(HttpServletRequest request, HttpServletResponse response) {
+    public List<Indicators> topExpensesForTheMonth (HttpServletRequest request, HttpServletResponse response) {
 
         String tokenWithPrefix = request.getHeader(HEADER_JWT_STRING);
         if(tokenWithPrefix != null && tokenWithPrefix.startsWith(TOKEN_PREFIX)) {
@@ -198,7 +199,17 @@ public class TransactionDataService {
             if (userEntity == null)
                 return null;
 
-            return transactionDataDAO.topExpensesForTheMonth(userEntity.getId());
+            List<Indicators> list = transactionDataDAO.topExpensesForTheMonth(userEntity.getId());
+            if(list.size()>8){
+                int otherSum = 0;
+                for(int i = 7; i < list.size(); i++){
+                    otherSum += list.get(i).getSummary();
+                }
+                list = list.subList(0,7);
+                list.add(new Indicators("Другое", otherSum));
+            }
+
+            return list;
 
         }
         StaticMethods.createResponse(request, response, 432, "Incorrect JWToken");
