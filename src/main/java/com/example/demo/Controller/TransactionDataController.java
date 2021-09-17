@@ -132,6 +132,10 @@ public class TransactionDataController {
     }
 
 
+    @ApiOperation(value = "Отображение продукции подстать клиенту")
+    @ApiResponses(value = {
+            @ApiResponse(code = 432, message = "Incorrect JWToken")
+    })
     @GetMapping("/advertisingProducts")
     public ProductsOfBankDTO advertisingProducts(HttpServletRequest request, HttpServletResponse response){
         return transactionDataService.advertisingProducts(request, response);
