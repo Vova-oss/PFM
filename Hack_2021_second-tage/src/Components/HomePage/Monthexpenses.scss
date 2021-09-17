@@ -1,0 +1,117 @@
+
+.monthExpenses {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  bottom: 0.4rem;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+
+  &__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &:after {
+      content: '';
+      position: absolute;
+      height: 20px;
+      width: 2px;
+      top: 0px;
+    }
+
+    @media (max-width: 768px) {
+      width: 48%;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 480px) {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+
+  &__title {
+    cursor: help;
+    font-family: Gilroy;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-style: normal;
+    max-width: 130px;
+    max-height: 21px;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    color: #2C2D84;
+    margin-bottom: 10px;
+
+    @media (max-width: 480px) {
+      width: 100%;
+      text-overflow: ellipsis;
+      max-width: 170px;
+    }
+    &_orn{
+      color:#EA5616;
+      overflow: auto;
+      max-height: none;
+      max-width: none;
+    }
+  }
+
+  &__numbers{
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__price {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+
+
+    color: #141834;
+    &_big {
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 44px;
+      color: #141834;
+    }
+
+    &_currency{
+      color: rgba(20, 24, 52, 0.4);
+    }
+  }
+
+  &__percent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 4px;
+  }
+
+  &__before{
+    content: '';
+    width: 5px;
+    margin-left: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #EA5616 ;
+  }
+
+  &__line {
+    background: rgba(20, 24, 52, 0.05);
+    border-radius: 27px;
+    width: 130px;
+    height: 10px;
+  }
+}
+
+
+
+
+

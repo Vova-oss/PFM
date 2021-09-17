@@ -1,0 +1,24 @@
+.radar{
+    position: absolute;
+    margin: 0 auto;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    top:70%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width: 395px;
+    height: 400px;
+
+    &__item{
+        font-size: 14px;
+        max-width: 100px;
+        max-height: 34px;
+        cursor: help;
+        font-family: Gilroy;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-style: normal;
+
+    }
+}

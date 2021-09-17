@@ -1,0 +1,49 @@
+.recommendedServices {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 480px) {
+    flex-wrap: wrap;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+
+  &__blockText {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-style: normal;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    margin-bottom: 5px;
+    /* identical to box height */
+
+  }
+
+  &__subtitle {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 17px;
+    color: rgba(255, 255, 255, 0.5);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-height: 35px;
+
+  }
+
+  &__button{
+    @media (max-width: 480px) {
+      width: 300px;
+      margin-top: 10px;
+    }
+  }
+
+
+}

@@ -1,0 +1,115 @@
+.weekExpenses{
+  &__graphic{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 25px;
+  }
+
+
+  &__items{
+    width: 100%;
+    height: 201.6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__itemCategory{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 30px;
+    height: 170px;
+  }
+
+  &__itemCategoryWrapper{
+    height: 100%;
+  }
+
+  &__tooltip{
+    width: 174px;
+    height:124px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+    padding: 15px 20px 5px;
+    border-radius: 10px;
+  }
+
+  &__tooltipContent{
+
+  }
+
+  &__tooltipInfo{
+    margin-bottom: 5px;
+
+    &_price{
+      font-style: normal;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 22px;
+      text-align: right;
+      color: #141834;
+      text-align: left;
+
+    }
+  }
+
+
+  &__item  {
+    background-color: rgba(20, 24, 52, 0.05);
+    height: 100%;
+    border-radius:  25px;
+    min-width: 45%;
+  }
+
+
+
+
+  &__weekDays{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+  }
+
+  &__weekDay{
+    width: 35px;
+    margin-top: 10px;
+    text-align: center;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: rgba(20, 24, 52, 0.25);
+    cursor: pointer;
+  }
+
+  &__dataBlock{
+    width: 100%;
+    margin-top: 20px;
+  }
+  &__data{
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    color: #EA5616;
+  }
+
+  &__price {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 22px;
+    color: #141834;
+    margin-top:10px ;
+
+    &_span{
+      color: rgba(20, 24, 52, 0.4);
+    }
+  }
+
+
+
+}
