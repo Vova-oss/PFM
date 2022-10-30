@@ -42,11 +42,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
                 .and()
                 .csrf().disable().authorizeRequests()
 
-                .antMatchers("/user/**").permitAll()
+                .antMatchers("/api/user/**").permitAll()
 
-                .antMatchers("/refreshToken").permitAll()
+                .antMatchers("/api/refreshToken").permitAll()
+                .antMatchers("/api/login").permitAll()
 
-                .antMatchers("/transactions/**").hasAuthority("USER")
+                .antMatchers("/api/transactions/**").hasAuthority("USER")
 
 
                 .anyRequest().permitAll()
