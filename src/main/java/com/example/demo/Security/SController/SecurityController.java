@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @Api(tags = "Security")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin("http://hack.saizaax.xyz:3000")
 public class SecurityController {
 
     @Autowired
