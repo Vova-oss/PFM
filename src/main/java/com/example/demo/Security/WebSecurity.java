@@ -54,7 +54,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), refreshTokenService, jwTokenService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwTokenService))
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .formLogin().loginProcessingUrl("/api/login");
     }
 
     @Override
