@@ -18,7 +18,7 @@ import java.util.List;
 
 @Api(tags = "TransactionData")
 @RestController
-@CrossOrigin("https://hack.saizaax.xyz:3000")
+@CrossOrigin("https://hack.saizaax.xyz")
 @RequestMapping("/transactions")
 public class TransactionDataController {
 
