@@ -69,7 +69,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://hack.saizaax.xyz")
+                .allowedOrigins("*")
                 .allowedMethods("*");
     }
 
