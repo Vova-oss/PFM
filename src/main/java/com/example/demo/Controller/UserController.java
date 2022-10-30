@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "User")
 @RestController
-@CrossOrigin("https://hack.saizaax.xyz:3000")
+@CrossOrigin("https://hack.saizaax.xyz")
 @RequestMapping("/user")
 public class UserController {
 
