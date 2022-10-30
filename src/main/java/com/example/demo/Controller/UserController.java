@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "User")
 @RestController
 @CrossOrigin("https://hack.saizaax.xyz")
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Hidden
